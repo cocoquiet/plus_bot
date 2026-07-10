@@ -11,7 +11,7 @@ async fn project(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult 
     let subcommand = match args.single::<String>() {
         Ok(cmd) => cmd,
         Err(_) => {
-            msg.reply(ctx, "❌ 사용법: `~project <generate | rename | delete> [프로젝트명]`").await?;
+            msg.reply(ctx, "❌ 사용법: `/project <generate | rename | delete> [프로젝트명]`").await?;
             return Ok(());
         }
     };
@@ -22,7 +22,7 @@ async fn project(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult 
             let project_name = match args.single::<String>() {
                 Ok(name) => name,
                 Err(_) => {
-                    msg.reply(ctx, "⚠️ 생성할 프로젝트 이름을 입력해주세요.\n사용법: `~project generate 프로젝트A`").await?;
+                    msg.reply(ctx, "⚠️ 생성할 프로젝트 이름을 입력해주세요.\n사용법: `/project generate 프로젝트A`").await?;
                     return Ok(());
                 }
             };
@@ -58,7 +58,7 @@ async fn project(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult 
                 };
 
                 match guild_id.member(&ctx.http, msg.author.id).await {
-                    Ok(mut member) => {
+                    Ok(member) => {
                         if let Err(why) = member.add_role(&ctx.http, project_role.id).await {
                             println!("⚠️ [generate] 유저에게 역할 부여 실패: {:?}", why);
                         } else {
@@ -138,7 +138,7 @@ async fn project(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult 
             let new_name = match args.single::<String>() {
                 Ok(name) => name,
                 Err(_) => {
-                    msg.reply(ctx, "⚠️ 변경할 새 이름을 입력해주세요.\n사용법: `~project rename 새이름`").await?;
+                    msg.reply(ctx, "⚠️ 변경할 새 이름을 입력해주세요.\n사용법: `/project rename 새이름`").await?;
                     return Ok(());
                 }
             };

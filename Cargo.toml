@@ -8,6 +8,8 @@ edition = "2018"
 dotenv = "0.15"
 tracing = "0.1.23"
 tracing-subscriber = "0.3"
+reqwest = { version = "0.11", features = ["json"] } # 노션에 HTTP 요청을 보내기 위함
+serde = { version = "1.0", features = ["derive"] }
 
 [dependencies.tokio]
 version = "1.0"
