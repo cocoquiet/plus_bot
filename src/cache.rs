@@ -144,7 +144,7 @@ async fn refresh_cache(cache: &Arc<RwLock<BotCache>>, http: &Arc<Http>, guild_id
                     // 카테고리(프로젝트)이면서 이름에 "(PM: " 택스트가 붙어 있는지 필터링
                     if channel.kind == ChannelType::Category && channel.name.contains("(PM: ") {
                         //프로젝트명과 pm이름 분리
-                        let parts: Vec<&str> = channel.name.split("PM: ").collect();
+                        let parts: Vec<&str> = channel.name.split("(PM: ").collect();
                         if parts.len() == 2 {
                             let project_name = parts[0].to_string();
                             let pm_name = parts[1].trim_end_matches(')');
