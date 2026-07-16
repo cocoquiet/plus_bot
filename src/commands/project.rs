@@ -212,6 +212,20 @@ pub async fn run_project_command(
                 kind: PermissionOverwriteType::Member(bot_id),
             };
 
+            // 프로젝트 멤버들의 채팅을 막기 위한 오버라이트 (View만 허용, Send 차단)
+            let readonly_project_role = PermissionOverwrite {
+                allow: Permissions::VIEW_CHANNEL,
+                deny: Permissions::SEND_MESSAGES, // 👈 깃허브, 정보 채널 등에서 발언권 차단
+                kind: PermissionOverwriteType::Role(project_role.id),
+            };
+
+            // PM(명령어 호출자)에게만 발언권을 주기 위한 오버라이트
+            let allow_pm = PermissionOverwrite {
+                allow: Permissions::VIEW_CHANNEL | Permissions::SEND_MESSAGES,
+                deny: Permissions::empty(),
+                kind: PermissionOverwriteType::Member(command.user.id), // 👈 PM 개인 유저 ID
+            };
+
             // PM 이름 빌드 및 캐시 동기화
             let pm_name = match cache.all_members.get(&command.user.id) {
                 Some(name) => name.clone(),
@@ -243,7 +257,11 @@ pub async fn run_project_command(
             let category_name = format!("{}(PM: {})", project_name, pm_name);
             let category_builder = CreateChannel::new(&category_name)
                 .kind(ChannelType::Category)
-                .permissions(vec![deny_everyone, allow_project_role, allow_bot]);
+                .permissions(vec![
+                    deny_everyone.clone(),
+                    allow_project_role.clone(),
+                    allow_bot.clone(),
+                ]);
 
             match guild_id.create_channel(&ctx.http, category_builder).await {
                 Ok(category) => {
@@ -259,9 +277,25 @@ pub async fn run_project_command(
                     ];
 
                     for ch_name in text_channels {
-                        let builder = CreateChannel::new(ch_name)
+                        let mut builder = CreateChannel::new(ch_name)
                             .kind(ChannelType::Text)
                             .category(category.id);
+
+                        if ch_name == "🖥️github" {
+                            builder = builder.permissions(vec![
+                                deny_everyone.clone(),
+                                readonly_project_role.clone(),
+                                allow_bot.clone(),
+                            ]);
+                        } else if ch_name == "📜information" {
+                            builder = builder.permissions(vec![
+                                deny_everyone.clone(),
+                                readonly_project_role.clone(),
+                                allow_pm.clone(),
+                                allow_bot.clone(),
+                            ]);
+                        }
+
                         let _ = guild_id.create_channel(&ctx.http, builder).await;
                         tokio::time::sleep(std::time::Duration::from_millis(100)).await;
                     }
@@ -515,6 +549,6 @@ pub async fn run_project_command(
         }
         _ => {}
     }
-
+    
     Ok(())
 }

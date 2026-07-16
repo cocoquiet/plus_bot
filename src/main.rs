@@ -29,6 +29,7 @@ impl EventHandler for Handler {
 
         // 슬래시 커맨드 등록 목록
         let commands_list = vec![
+            commands::help::register_help_command(),
             commands::project::register_project_command(),
             commands::member::register_member_command(),
         ];
@@ -44,6 +45,13 @@ impl EventHandler for Handler {
         // 들어온 상호작용이 슬래시 커맨드(Command)일 때만 처리
         if let Interaction::Command(command) = interaction {
             match command.data.name.as_str() {
+                "help" => {
+                    if let Err(why) =
+                        commands::help::run_help_command(&ctx, &command, self.guild_id).await
+                    {
+                        error!("help 커맨드 실행 오류: {:?}", why);
+                    }
+                }
                 "project" => {
                     if let Err(why) = commands::project::run_project_command(&ctx, &command).await {
                         error!("커맨드 실행 오류: {:?}", why);

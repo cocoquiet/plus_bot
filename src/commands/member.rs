@@ -21,7 +21,7 @@ pub fn register_member_command() -> CreateCommand {
         .add_option(CreateCommandOption::new(
             CommandOptionType::SubCommand,
             "list",
-            "현재 프로젝트 카테고리에 참여 중인 인원 목록을 확인합니다.",
+            "현재 프로젝트에 참여 중인 인원 목록을 확인합니다.",
         ))
         // 2. add 서브커맨드 (/member add [user1] [user2] [user3])
         .add_option(
