@@ -48,7 +48,7 @@ pub async fn run_help_command(
             // 명령어 이름, 설명, 하위 명령어 목록을 임베드 필드로 추가
             let mut field_value = String::new();
             write!(field_value, "{}\n", cmd.description).unwrap(); // field_value.push_str(&format!("{}\n", cmd.description));
-            
+
             // 하위 명령어가 있는 경우, 하위 명령어 목록을 추가
             let mut subcommands = Vec::new();
             for option in &cmd.options {
