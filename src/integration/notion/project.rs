@@ -34,6 +34,7 @@ pub struct Project {
     pub github: String,
     pub pm: Member,
     pub participants: Vec<Member>,
+    pub category_id: String,
 }
 
 impl Project {
@@ -76,6 +77,10 @@ impl Project {
             .into_iter()
             .map(|m| m.unwrap_or_default())
             .collect(),
+            category_id: properties["category_id"]["rich_text"][0]["text"]["content"]
+                .as_str()
+                .unwrap_or_default()
+                .to_string(),
         }
     }
 }
@@ -225,7 +230,8 @@ pub async fn update_project(
                 } } },
                 "github": { "url": project.github },
                 "PM": { "people": [{ "id": project.pm.id }] },
-                "participants": { "people": project.participants.iter().map(|p| serde_json::json!({ "id": p.id })).collect::<Vec<_>>() }
+                "participants": { "people": project.participants.iter().map(|p| serde_json::json!({ "id": p.id })).collect::<Vec<_>>() },
+                "category_id": { "rich_text": [{ "text": { "content": project.category_id } }] }
             }
         }))
         .send()
